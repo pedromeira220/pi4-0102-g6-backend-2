@@ -30,6 +30,15 @@ não foi acrescentado campo `tipo`, pois o CT6 não define esse campo.
 Na abertura e após reconexão, consultar o estado atual no Backend 1.
 Não há armazenamento ou reenvio de eventos perdidos.
 
+## Estrutura do servidor TCP
+
+A divisão de responsabilidades segue o exemplo Fazedor de Continhas:
+
+- `ServidorTCP` inicia e encerra o serviço TCP junto com o Spring Boot.
+- `AceitadoraDeConexao` escuta a porta TCP e inicia uma supervisora por conexão.
+- `SupervisoraDeConexao` interpreta e valida as atualizações recebidas, depois chama `NotificacaoService`.
+- `Parceiro` encapsula a leitura do socket. Neste projeto, as mensagens são JSON por linha.
+
 ## Entrada TCP provisória — confirmar com CT4
 
 Cada mensagem é um JSON UTF-8 em uma única linha, terminado por `\n`.
