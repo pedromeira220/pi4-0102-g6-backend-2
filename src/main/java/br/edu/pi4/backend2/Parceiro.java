@@ -1,33 +1,28 @@
 package br.edu.pi4.backend2;
 
-import java.io.BufferedReader;
+import br.com.pi4g6.comunicado.Comunicado;
+import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 
 final class Parceiro implements AutoCloseable {
-    private static final int LIMITE_MENSAGEM = 8192;
     private final Socket socket;
-    private final BufferedReader entrada;
+    private final ObjectInputStream entrada;
 
     Parceiro(Socket socket) throws IOException {
         this.socket = socket;
-        this.entrada = new BufferedReader(new InputStreamReader(
-                socket.getInputStream(), StandardCharsets.UTF_8));
+        this.entrada = new ObjectInputStream(socket.getInputStream());
     }
 
-    String receberMensagem() throws IOException {
-        StringBuilder linha = new StringBuilder();
-        int caractere;
-        while ((caractere = entrada.read()) != -1) {
-            if (caractere == '\n') return linha.toString();
-            if (linha.length() >= LIMITE_MENSAGEM) {
-                throw new IOException("Mensagem excede " + LIMITE_MENSAGEM + " caracteres");
-            }
-            linha.append((char) caractere);
+    Comunicado receberComunicado() throws IOException {
+        try {
+            return (Comunicado) entrada.readObject();
+        } catch (EOFException fim) {
+            return null;
+        } catch (ClassNotFoundException | ClassCastException erro) {
+            throw new IOException("Objeto fora do contrato CT4", erro);
         }
-        return linha.isEmpty() ? null : linha.toString();
     }
 
     @Override
