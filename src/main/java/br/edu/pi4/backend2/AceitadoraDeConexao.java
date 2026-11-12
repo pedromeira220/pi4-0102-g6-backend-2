@@ -6,7 +6,6 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,16 +17,14 @@ final class AceitadoraDeConexao extends Thread implements AutoCloseable {
 
     private final ServerSocket servidor;
     private final Set<Socket> conexoes = new HashSet<>();
-    private final ObjectMapper json;
     private final Validator validator;
     private final NotificacaoService notificacoes;
     private volatile boolean ativa = true;
 
-    AceitadoraDeConexao(int porta, ObjectMapper json, Validator validator,
+    AceitadoraDeConexao(int porta, Validator validator,
                         NotificacaoService notificacoes) throws IOException {
         super("servidor-tcp");
         this.servidor = new ServerSocket(porta);
-        this.json = json;
         this.validator = validator;
         this.notificacoes = notificacoes;
         setDaemon(true);
@@ -62,7 +59,7 @@ final class AceitadoraDeConexao extends Thread implements AutoCloseable {
         }
 
         conexoes.add(socket);
-        new SupervisoraDeConexao(socket, json, validator, notificacoes,
+        new SupervisoraDeConexao(socket, validator, notificacoes,
                 () -> remover(socket)).start();
     }
 
