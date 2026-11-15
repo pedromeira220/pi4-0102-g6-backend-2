@@ -1,0 +1,23 @@
+# H01.4: compila e roda os testes JUnit a cada push e a cada PR.
+# Teste quebrado marca o commit como falho.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Compila e roda os testes
+        run: sh mvnw -B verify
