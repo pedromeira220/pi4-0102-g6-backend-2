@@ -2,7 +2,6 @@ package br.edu.pi4.backend2;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PreDestroy;
 import jakarta.validation.Validator;
 import org.slf4j.Logger;
@@ -16,15 +15,13 @@ import org.springframework.stereotype.Component;
 public class ServidorTCP implements ApplicationRunner {
     private static final Logger log = LoggerFactory.getLogger(ServidorTCP.class);
 
-    private final ObjectMapper json;
     private final Validator validator;
     private final NotificacaoService notificacoes;
     private final int porta;
     private AceitadoraDeConexao aceitadora;
 
-    public ServidorTCP(ObjectMapper json, Validator validator, NotificacaoService notificacoes,
+    public ServidorTCP(Validator validator, NotificacaoService notificacoes,
                        @Value("${tcp.port}") int porta) {
-        this.json = json;
         this.validator = validator;
         this.notificacoes = notificacoes;
         this.porta = porta;
@@ -32,7 +29,7 @@ public class ServidorTCP implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws IOException {
-        aceitadora = new AceitadoraDeConexao(porta, json, validator, notificacoes);
+        aceitadora = new AceitadoraDeConexao(porta, validator, notificacoes);
         aceitadora.start();
         log.info("Servidor TCP escutando na porta {}", aceitadora.porta());
     }
