@@ -3,9 +3,9 @@
 | Linha | Valor |
 |---|---|
 | Fronteira | WebSocket |
-| Quem chama | Backend 2, sempre que recebe etapaGravada (CT4) do Backend 1 |
+| Quem chama | Backend 2, sempre que recebe etapaGravada (CT4) do Backend 1, inclusive quando só a posição mudou |
 | Quem responde | Frontend, em todas as páginas inscritas no canal do pedido. Não há resposta. |
-| Atende | E3 e E5 |
+| Atende | E3, E4 e E5 |
 | Como chamar | Canal `/topic/pedidos/{senha}`, mensagem do tipo etapaAlterada |
 
 ## Entrada
@@ -15,6 +15,7 @@
 | senha | inteiro | sim | 42 |
 | etapa | um de: recebido, em_preparo, pronto, encerrado | sim | em_preparo |
 | estimativaMinutos | inteiro | não (vem só nas etapas recebido e em_preparo) | 8 |
+| posicaoNaFila | inteiro | não (vem só nas etapas recebido e em_preparo) | 3 |
 | atualizadoEm | data e hora | sim | 2026-10-13T19:20:00 |
 
 ## Saída
